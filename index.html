@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#161E2F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Âncora</title>
+
+  <!-- Configuração PWA -->
+  <link rel="manifest" href="/manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-active-tab="eventos">
+
+  <!-- TELA DE ABERTURA (SPLASH) -->
+  <div id="splash-screen">
+    <h1 class="splash-title">ÂNCORA</h1>
+    <div class="splash-footer">
+      <p>Desenvolvido por <span class="an-white">AN</span> <span class="x-blue">X</span></p>
+      <p class="splash-version">Versão: 2.0.1</p>
+    </div>
+  </div>
+
+  <div class="bg-layer bg-mesh" aria-hidden="true"></div>
+
+  <div class="top-bar">
+    <header>
+      <div class="brand" onclick="toggleMenu()" title="Abrir menu">
+        <h1>Âncora</h1>
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+    </header>
+
+    <nav class="top-nav" id="main-nav" aria-label="Navegação principal">
+      <button data-tab="eventos" onclick="mudarAba('eventos')" class="active">Eventos</button>
+      <button data-tab="semana" onclick="mudarAba('semana')">Escala</button>
+      <button data-tab="historico" onclick="mudarAba('historico')">Histórico</button>
+      <button data-tab="dashboard" onclick="mudarAba('dashboard')">Dashboard</button>
+      <button data-tab="cadastrar" onclick="mudarAba('cadastrar')">Cadastrar</button>
+    </nav>
+  </div>
+
+  <main>
+    <!-- ABA EVENTOS -->
+    <section id="tab-eventos" class="tab">
+      <button class="btn-hero" onclick="abrirModalEvento()">
+        <span class="btn-hero-label">Novo evento</span>
+        <span class="btn-hero-sub">agendar · escalar · organizar</span>
+      </button>
+      <div id="lista-eventos" class="content-area"><div class="spinner"></div></div>
+    </section>
+
+    <!-- ABA ESCALA -->
+    <section id="tab-semana" class="tab">
+      <div class="section-head">
+        <h2 class="section">Escala</h2>
+      </div>
+      <div class="week-nav">
+        <button onclick="mudarSemana(-1)" aria-label="Semana anterior">Anterior</button>
+        <div class="range" id="semana-range" onclick="abrirModalFiltroSemana()">—</div>
+        <button onclick="mudarSemana(1)" aria-label="Próxima semana">Próxima</button>
+      </div>
+      
+      <div class="chips chips-sub">
+        <div class="chip active" onclick="mudarSubSemana('eventos', this)">Semana</div>
+        <div class="chip" onclick="mudarSubSemana('escala', this)">Escala</div>
+      </div>
+
+      <div id="semana-conteudo" class="content-area"><div class="spinner"></div></div>
+    </section>
+
+    <!-- ABA HISTÓRICO -->
+    <section id="tab-historico" class="tab">
+      <div class="section-head" style="margin-bottom: 16px;">
+        <h2 class="section" style="margin: 0;">Histórico</h2>
+      </div>
+      
+      <div class="chips chips-sub">
+        <div class="chip active" onclick="mudarSubHistorico('evento', this)">Eventos</div>
+        <div class="chip" onclick="mudarSubHistorico('garcom', this)">Garçons</div>
+      </div>
+      <div class="chips chips-periodo">
+        <div class="chip" onclick="mudarPeriodo('semana', this)">Semana</div>
+        <div class="chip active" onclick="mudarPeriodo('mes', this)">Mês</div>
+        <div class="chip" onclick="mudarPeriodo('ano', this)">Ano</div>
+      </div>
+      
+      <div id="busca-historico-wrap" class="search-filter-row">
+        <input id="busca-historico" placeholder="Buscar..." oninput="atualizarBuscaHistorico(this.value)">
+        <button id="btn-abrir-filtros" class="btn-filter" onclick="abrirModalFiltros()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          Filtros
+        </button>
+      </div>
+
+      <div id="historico-conteudo" class="content-area"><div class="spinner"></div></div>
+    </section>
+
+    <!-- ABA DASHBOARD -->
+    <section id="tab-dashboard" class="tab">
+      <div class="section-head">
+        <h2 class="section">Dashboard</h2>
+      </div>
+
+      <div class="chips chips-sub">
+        <div class="chip active" onclick="mudarSubDashboard('eventos', this)">Eventos</div>
+        <div class="chip" onclick="mudarSubDashboard('garcons', this)">Garçons</div>
+      </div>
+
+      <div id="dash-sub-eventos" class="dash-sub active">
+        <div class="chips chart-chips" style="margin-bottom:16px; flex-wrap:wrap;">
+          <div class="chip" onclick="mudarLimiteDashboard('eventos', 2, this)">Top 2</div>
+          <div class="chip active" onclick="mudarLimiteDashboard('eventos', 3, this)">Top 3</div>
+          <div class="chip" onclick="mudarLimiteDashboard('eventos', 5, this)">Top 5</div>
+          <div class="chip" onclick="abrirModalComparativo('eventos', this)">Comparativo</div>
+        </div>
+        
+        <div id="infografico-eventos" class="infografico-container">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+
+      <div id="dash-sub-garcons" class="dash-sub">
+        <div class="chips chart-chips" style="margin-bottom:16px; flex-wrap:wrap;">
+          <div class="chip" onclick="mudarLimiteDashboard('garcons', 2, this)">Top 2</div>
+          <div class="chip active" onclick="mudarLimiteDashboard('garcons', 3, this)">Top 3</div>
+          <div class="chip" onclick="mudarLimiteDashboard('garcons', 5, this)">Top 5</div>
+          <div class="chip" onclick="abrirModalComparativo('garcons', this)">Comparativo</div>
+        </div>
+
+        <div id="infografico-garcons" class="infografico-container">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ABA CADASTRAR -->
+    <section id="tab-cadastrar" class="tab">
+      <button class="btn-hero" onclick="abrirModalGarcom()">
+        <span class="btn-hero-label">Novo garçom</span>
+        <span class="btn-hero-sub">cadastrar · ativar · gerenciar</span>
+      </button>
+      <h3 class="section" id="g-titulo-lista">Garçons cadastrados</h3>
+      <div id="lista-garcons" class="content-area"><div class="spinner"></div></div>
+    </section>
+  </main>
+
+  <div id="modal-container"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/garcons.js"></script>
+  <script src="js/eventos.js"></script>
+  <script src="js/semana.js"></script>
+  <script src="js/historico.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Registro do Service Worker (PWA) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+          console.log('Erro ao registrar Service Worker:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
